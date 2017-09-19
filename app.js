@@ -20,7 +20,7 @@ var SESSION_SECRET = process.env.SESSION_SECRET
 
 //passport関連
 passport.serializeUser(function (user, done) {
-  doen(null, user);
+  done(null, user);
 });
 
 passport.deserializeUser(function (obj, done) {
