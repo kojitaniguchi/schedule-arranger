@@ -1,10 +1,43 @@
+//default
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+//
 var helmet = require('helmet');
+//
+var session = require('express-session');
+var passport = require('passport');
+//githubu認証
+var GitHubStrategy = require('passport-github2').Strategy;
+//設定を.envからロード
+require('dotenv').config();
+var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
+var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
+var SESSION_SECRET = process.env.SESSION_SECRET
+
+//passport関連
+passport.serializeUser(function (user, done) {
+  doen(null, user);
+});
+
+passport.deserializeUser(function (obj, done) {
+  done(null, obj);
+});
+
+passport.use(new GitHubStrategy({
+  clientID: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET ,
+  callbackURL: 'http://localhost:8000/auth/github/callback'
+},
+  function (accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+      return done(null, profile);
+    });
+  }
+));
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -23,6 +56,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//session管理
+app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', routes);
 app.use('/users', users);
