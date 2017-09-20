@@ -1,7 +1,11 @@
 'use strict'
-const Sequelize = require('Sequelize');
+const Sequelize = require('sequelize');
+//DB接続の
+require('dotenv').config();
+var DB_CONNECTION = process.env.DB_CONNECTION
+
 const sequelize = new Sequelize(
-  'postgres://postgres:postgres@localhost/schedule_arranger',
+  DB_CONNECTION,
   { logging: true });
 
 module.exports = {

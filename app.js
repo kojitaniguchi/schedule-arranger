@@ -21,9 +21,11 @@ User.sync().then(() => {
   Schedule.belongsTo(User, {foreignKey: 'createdBy'});
   Schedule.sync();
   Comment.belongsTo(User, {foreignKey: 'userId'});
-  Comment.sync().then(() => {
-    Availability.belongsTo(User, {foreignKey: 'userId'});
-    Candidate.sync();
+  Comment.sync();
+  Availability.belongsTo(User, {foreignKey: 'userId'});
+  Candidate.sync().then(() => {
+    Availability.belongsTo(Candidate, {foreignKey: 'candidateId'});
+    Availability.sync();
   });
 });
 //githubu認証
