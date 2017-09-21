@@ -7,7 +7,6 @@ const Schedule = require('../models/schedule');
 const Candidate = require('../models/candidate');
 const User = require('../models/user');
 
-
 router.get('/new', authenticationEnsure, (req, res, next) => {
   res.render('new', { user: req.user });
 });
@@ -30,6 +29,38 @@ router.post('/', authenticationEnsure, (req, res, next) => {
     Candidate.bulkCreate(candidates).then(() => {
           res.redirect('/schedules/' + schedule.scheduleId);
     });
+  });
+});
+
+router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
+  Schedule.findOne({
+    include: [
+      {
+        model: User,
+        attributes: ['userId', 'username']
+      }],
+    where: {
+      scheduleId: req.params.scheduleId
+    },
+    order: '"updatedAt" DESC'
+  }).then((schedule) => {
+    if (schedule) {
+      Candidate.findAll({
+        where: { scheduleId: schedule.scheduleId },
+        order: '"CandidateId" ASC'
+      }).then((candidates) => {
+          res.render('schedule', {
+            user: req.user,
+            schedule: schedule,
+            candidates: candidates,
+            users: [req.user]
+          });
+      });
+    } else {
+      const err = new Error('指定された予定は見つかりません');
+      err.status = 404;
+      next(err);
+    }
   });
 });
 
