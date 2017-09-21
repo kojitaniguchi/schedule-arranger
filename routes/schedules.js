@@ -5,6 +5,8 @@ const authenticationEnsure = require('./authentication-ensurer');
 const uuid = require('node-uuid');
 const Schedule = require('../models/schedule');
 const Candidate = require('../models/candidate');
+const User = require('../models/user');
+
 
 router.get('/new', authenticationEnsure, (req, res, next) => {
   res.render('new', { user: req.user });
