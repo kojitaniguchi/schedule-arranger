@@ -1,7 +1,7 @@
 'use strict'
 const express = require('express');
 const router = express.Router();
-const authenticationEnsure = require('./authentication-ensure');
+const authenticationEnsure = require('./authentication-ensurer');
 
 router.get('/new', authenticationEnsure, (req, res, next) => {
   res.render('new', { user: req.user });
