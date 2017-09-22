@@ -6,6 +6,7 @@ const uuid = require('node-uuid');
 const Schedule = require('../models/schedule');
 const Candidate = require('../models/candidate');
 const User = require('../models/user');
+const Availability = require('../models/availability');
 
 router.get('/new', authenticationEnsurer, (req, res, next) => {
   res.render('new', { user: req.user });
@@ -49,13 +50,62 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
         where: { scheduleId: schedule.scheduleId },
         order: '"CandidateId" ASC'
       }).then((candidates) => {
-          res.render('schedule', {
-            user: req.user,
-            schedule: schedule,
-            candidates: candidates,
-            users: [req.user]
+          //データベースからその予定の全ての出欠を取得する
+          Availability.findAll({
+            include: [
+              {
+                models: User,
+                attributes: ['userId','username']
+              }
+            ],
+            where: { scheduleId: schedule.scheduleId },
+            order: '"user.username" ASC, "candidateId" ASC'
+          }).then((availabilities) => {
+            //出欠 MapMap(キー:ユーザー ID, 値:出欠Map(キー:候補 ID, 値:出欠)) の作成
+            const availabilityMapMap = new Map(); // key: userId, value: Map(key: candidateId, availability)
+            availabilities.forEach((a) => {
+              const map = availabilityMapMap.get(a.user.userId) || new Map();
+              map.set(a.CandidateId, a.availability);
+              availabilityMapMap.set(a.user.userId, map);
+            });
+
+            // 閲覧ユーザーと出欠に紐づくユーザーからユーザーMap (キー:ユーザー ID, 値:ユーザー) を作る
+            const userMap = new Map(); //// key: userId, value: User
+            userMap.set(parseInt(req.user.id), {
+              isSelf: true,
+              userId: parseInt(req.user.id),
+              username: req.user.username
+            });
+            availabilities.forEach((a) => {
+              userMap.set(a.user.userId, => {
+                isSelf: parseInt(req.user.id) === a.user.userId, // 閲覧ユーザー自身であるかを含める
+                userId: a.user,userId,
+                username: a.user.username
+              });
+            });
+
+            //全ユーザー、全候補で二重ループしてそれぞれの出欠の値がない場合には、「欠席」を設定する
+            const = users = Array.from(userMap).map((keyValue) => keyValue[1]);
+            user.forEach((u) => {
+              candidates.forEach((c) => {
+                const map = availabilityMapMap.get(u.userId) || new Map();
+                const a = map.get(c.candidateId) || 0; //デフォルトは０を利用
+                map.set(c.candidateId, a);
+                availabilityMapMap.set(u.userId, map);
+              });
+            });
+
+            cosole.log(availabilityMapMap);
+
+            res.render('schedule', {
+              user: req.user,
+              schedule: schedule,
+              candidates: candidates,
+              users: users,
+              availabilityMapMap: availabilityMapMap,
+            });
           });
-      });
+        });
     } else {
       const err = new Error('指定された予定は見つかりません');
       err.status = 404;
