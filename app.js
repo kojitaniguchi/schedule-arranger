@@ -67,7 +67,7 @@ var routes = require('./routes/index');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 var schedules = require('./routes/schedules')
-var availabilities = require('./roues/availabilities')
+var availabilities = require('./routes/availabilities')
 
 var app = express();
 app.use(helmet());
