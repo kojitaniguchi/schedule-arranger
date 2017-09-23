@@ -77,7 +77,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
               username: req.user.username
             });
             availabilities.forEach((a) => {
-              userMap.set(a.user.userId, => {
+              userMap.set(parseInt(req.user.id),{
                 isSelf: parseInt(req.user.id) === a.user.userId, // 閲覧ユーザー自身であるかを含める
                 userId: a.user,userId,
                 username: a.user.username
@@ -85,7 +85,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
             });
 
             //全ユーザー、全候補で二重ループしてそれぞれの出欠の値がない場合には、「欠席」を設定する
-            const = users = Array.from(userMap).map((keyValue) => keyValue[1]);
+            const users = Array.from(userMap).map((keyValue) => keyValue[1]);
             user.forEach((u) => {
               candidates.forEach((c) => {
                 const map = availabilityMapMap.get(u.userId) || new Map();
