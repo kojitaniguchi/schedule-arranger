@@ -95,8 +95,6 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
               });
             });
 
-            cosole.log(availabilityMapMap);
-
             res.render('schedule', {
               user: req.user,
               schedule: schedule,
