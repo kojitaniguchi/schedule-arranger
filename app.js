@@ -67,6 +67,7 @@ var routes = require('./routes/index');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 var schedules = require('./routes/schedules')
+var availabilities = require('./roues/availabilities')
 
 var app = express();
 app.use(helmet());
@@ -88,10 +89,12 @@ app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: fals
 app.use(passport.initialize());
 app.use(passport.session());
 
+//routes
 app.use('/', routes);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/schedules', schedules);
+app.use('/schedules', availabilities);
 
 app.get('/auth/github',
   passport.authenticate('github', { scope:['user:email'] }),
