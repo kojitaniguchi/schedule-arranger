@@ -14,7 +14,7 @@ router.post('/:scheduleId/users/:userId/candidates/:candidateId', authentication
   Availability.upsert({
     scheduleId: scheduleId,
     userId: userId,
-    candidateId: candidateIdl
+    candidateId: candidateId,
     availability: availability
   }).then(() => {
     res.json({ status: 'OK', availability: availability });
