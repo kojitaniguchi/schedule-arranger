@@ -32,9 +32,9 @@ User.sync().then(() => {
 var GitHubStrategy = require('passport-github2').Strategy;
 //設定を.envからロード
 require('dotenv').config();
-var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
-var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
-var SESSION_SECRET = process.env.SESSION_SECRET
+var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+var SESSION_SECRET = process.env.SESSION_SECRET;
 
 //passport関連
 passport.serializeUser(function (user, done) {
@@ -66,8 +66,8 @@ passport.use(new GitHubStrategy({
 var routes = require('./routes/index');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
-var schedules = require('./routes/schedules')
-var availabilities = require('./routes/availabilities')
+var schedules = require('./routes/schedules');
+var availabilities = require('./routes/availabilities');
 
 var app = express();
 app.use(helmet());
