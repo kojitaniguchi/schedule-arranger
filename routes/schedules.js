@@ -48,14 +48,14 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     if (schedule) {
       Candidate.findAll({
         where: { scheduleId: schedule.scheduleId },
-        order: '"CandidateId" ASC'
+        order: '"candidateId" ASC'
       }).then((candidates) => {
           //データベースからその予定の全ての出欠を取得する
           Availability.findAll({
             include: [
               {
-                models: User,
-                attributes: ['userId','username']
+                model: User,
+                attributes: ['userId', 'username']
               }
             ],
             where: { scheduleId: schedule.scheduleId },
@@ -86,7 +86,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
 
             //全ユーザー、全候補で二重ループしてそれぞれの出欠の値がない場合には、「欠席」を設定する
             const users = Array.from(userMap).map((keyValue) => keyValue[1]);
-            user.forEach((u) => {
+            users.forEach((u) => {
               candidates.forEach((c) => {
                 const map = availabilityMapMap.get(u.userId) || new Map();
                 const a = map.get(c.candidateId) || 0; //デフォルトは０を利用
