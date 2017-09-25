@@ -25,3 +25,15 @@ block content
                 data-availability="#{availability}") #{availabilityLabels[availability]}
             else
               p #{availabilityLabels[availability]}
+    tr
+      th コメント
+      each user in users
+        if user.isSelf
+          td
+            p(id="self-comment") #{commentMap.get(user.userId)}
+            button(id="self-comment-button"
+              data-schedule-id="#{schedule.scheduleId}"
+              data-user-id="#{user.userId}") 編集
+        else
+          td
+            p #{commentMap.get(user.userId)}

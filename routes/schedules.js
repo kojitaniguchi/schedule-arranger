@@ -7,6 +7,7 @@ const Schedule = require('../models/schedule');
 const Candidate = require('../models/candidate');
 const User = require('../models/user');
 const Availability = require('../models/availability');
+const Comment = require('../models/comment');
 
 router.get('/new', authenticationEnsurer, (req, res, next) => {
   res.render('new', { user: req.user });
@@ -79,7 +80,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
             availabilities.forEach((a) => {
               userMap.set(parseInt(req.user.id),{
                 isSelf: parseInt(req.user.id) === a.user.userId, // 閲覧ユーザー自身であるかを含める
-                userId: a.user,userId,
+                userId: a.user.userId,
                 username: a.user.username
               });
             });
@@ -94,13 +95,22 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
                 availabilityMapMap.set(u.userId, map);
               });
             });
-
-            res.render('schedule', {
-              user: req.user,
-              schedule: schedule,
-              candidates: candidates,
-              users: users,
-              availabilityMapMap: availabilityMapMap,
+            //コメント取得
+            Comment.findAll({
+              where: { scheduleId: schedule.scheduleId }
+            }).then((Comments) => {
+              const commentMap = new Map();
+              Comments.forEach((comment) => {
+                commentMap.set(comment.userId, comment.comment);
+              });
+              res.render('schedule', {
+                user: req.user,
+                schedule: schedule,
+                candidates: candidates,
+                users: users,
+                availabilityMapMap: availabilityMapMap,
+                commentMap: commentMap
+              });
             });
           });
         });
