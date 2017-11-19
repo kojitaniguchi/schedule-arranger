@@ -11,7 +11,7 @@ var helmet = require('helmet');
 var session = require('express-session');
 var passport = require('passport');
 
-// モデルの読み込み
+// モデルの読み込み-------------------------------------------------------------
 var User = require('./models/user');
 var Schedule = require('./models/schedule');
 var Availability = require('./models/availability');
@@ -28,15 +28,8 @@ User.sync().then(() => {
     Availability.sync();
   });
 });
-//githubu認証
-var GitHubStrategy = require('passport-github2').Strategy;
-//設定を.envからロード
-require('dotenv').config();
-var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-var SESSION_SECRET = process.env.SESSION_SECRET;
 
-//passport関連
+//passport関連----
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
@@ -45,31 +38,7 @@ passport.deserializeUser(function (obj, done) {
   done(null, obj);
 });
 
-passport.use(new GitHubStrategy({
-  clientID: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET ,
-  callbackURL: 'http://localhost:8000/auth/github/callback'
-},
-  function (accessToken, refreshToken, profile, done) {
-    process.nextTick(function () {
-      User.upsert({
-        userId: profile.id,
-        username: profile.username
-      }).then(() => {
-        done(null, profile);
-      });
-    });
-  }
-));
-
-//router modules
-var routes = require('./routes/index');
-var login = require('./routes/login');
-var logout = require('./routes/logout');
-var schedules = require('./routes/schedules');
-var availabilities = require('./routes/availabilities');
-var comments = require('./routes/comments');
-
+// middleewar-------------------------------------------------------------------
 var app = express();
 app.use(helmet());
 
@@ -90,7 +59,14 @@ app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: fals
 app.use(passport.initialize());
 app.use(passport.session());
 
-//routes
+//router modules----------------------------------------------------------------
+const routes = require('./routes/index');
+const login = require('./routes/login');
+const logout = require('./routes/logout');
+const schedules = require('./routes/schedules');
+const availabilities = require('./routes/availabilities');
+const comments = require('./routes/comments');
+
 app.use('/', routes);
 app.use('/login', login);
 app.use('/logout', logout);
@@ -98,11 +74,35 @@ app.use('/schedules', schedules);
 app.use('/schedules', availabilities);
 app.use('/schedules', comments);
 
+//githubu認証-------------------------------------------------------------------
+var GitHubStrategy = require('passport-github2').Strategy;
+//設定を.envからロード
+require('dotenv').config();
+var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+var SESSION_SECRET = process.env.SESSION_SECRET;
+
+passport.use(new GitHubStrategy({
+  clientID: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET ,
+  callbackURL: 'http://localhost:8000/auth/github/callback'
+},
+  function (accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+      User.upsert({
+        userId: profile.id,
+        username: profile.username
+      }).then(() => {
+        done(null, profile);
+      });
+    });
+  }
+));
+
 app.get('/auth/github',
   passport.authenticate('github', { scope:['user:email'] }),
   function (req, res) {
 });
-
 app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
   function (req, res) {
@@ -116,17 +116,15 @@ app.get('/auth/github/callback',
       res.redirect('/');
     }
   });
-// catch 404 and forward to error handler
+
+// catch 404 and forward to error handler---------------------------------------
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
