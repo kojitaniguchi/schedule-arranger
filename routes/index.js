@@ -1,11 +1,11 @@
 'use strict'
-const express = require('express');
-const router = express.Router();
-const Schedule = require('../models/schedule');
+const express = require('express')
+const router = express.Router()
+const Schedule = require('../models/schedule')
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  const title = '予定調整君';
+  const title = '予定調整君'
   if (req.user) {
     Schedule.findAll({
       where: {
@@ -17,11 +17,11 @@ router.get('/', (req, res, next) => {
         title: title,
         user: req.user,
         schedules: schedules
-      });
-    });
+      })
+    })
   } else {
-    res.render('index', { title: title, user: req.user });
+    res.render('index', { title: title, user: req.user })
   }
-});
+})
 
-module.exports = router;
+module.exports = router

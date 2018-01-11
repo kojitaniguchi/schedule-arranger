@@ -1,6 +1,6 @@
-'use strict';
-const loader = require('./sequelize-loader');
-const Sequelize = loader.Sequelize;
+'use strict'
+const loader = require('./sequelize-loader')
+const Sequelize = loader.Sequelize
 
 const Availability = loader.database.define('availabilities', {
   candidateId: {
@@ -30,6 +30,6 @@ const Availability = loader.database.define('availabilities', {
       fields: ['scheduleId']
     }
   ]
-});
+})
 
-module.exports = Availability;
+module.exports = Availability

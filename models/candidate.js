@@ -1,6 +1,6 @@
-'use strict';
-const loader = require('./sequelize-loader');
-const Sequelize = loader.Sequelize;
+'use strict'
+const loader = require('./sequelize-loader')
+const Sequelize = loader.Sequelize
 
 const Candidate = loader.database.define('candidates', {
   candidateId: {
@@ -25,6 +25,6 @@ const Candidate = loader.database.define('candidates', {
       fields: ['scheduleId']
     }
   ]
-});
+})
 
-module.exports = Candidate;
+module.exports = Candidate

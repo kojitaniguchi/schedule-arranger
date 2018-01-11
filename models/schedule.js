@@ -1,6 +1,6 @@
 'use strict'
-const loader = require('./sequelize-loader');
-const Sequelize = loader.Sequelize;
+const loader = require('./sequelize-loader')
+const Sequelize = loader.Sequelize
 
 const Schedule = loader.database.define('schedules', {
   scheduleId: {
@@ -32,6 +32,6 @@ const Schedule = loader.database.define('schedules', {
       fields: ['createdBy']
     }
   ]
-});
+})
 
-module.exports = Schedule;
+module.exports = Schedule

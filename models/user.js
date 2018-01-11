@@ -1,6 +1,6 @@
 'use strict'
-const loader = require('./sequelize-loader');
-const Sequelize = loader.Sequelize;
+const loader = require('./sequelize-loader')
+const Sequelize = loader.Sequelize
 
 const User = loader.database.define('users', {
   userId: {
@@ -15,6 +15,6 @@ const User = loader.database.define('users', {
 }, {
   freezeTableName: true,
   timestamps: false
-});
+})
 
-module.exports = User;
+module.exports = User

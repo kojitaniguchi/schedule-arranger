@@ -1,13 +1,13 @@
 'use strict'
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
 router.get('/' , (req, res, next) => {
-  const from = req.query.from;
+  const from = req.query.from
   if (from) {
-    res.cookie('loginFrom', from, { expires: new Date(Date.now() + 600000)});
+    res.cookie('loginFrom', from, { expires: new Date(Date.now() + 600000)})
   }
-  res.render('login');
-});
+  res.render('login')
+})
 
-module.exports = router;
+module.exports = router
